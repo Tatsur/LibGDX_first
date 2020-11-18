@@ -15,8 +15,18 @@ public class Tank {
     private float speed;
     private float angle;
     private float angleWeapon;
+    private Target target;
+
+    public Projectile getProjectile() {
+        return projectile;
+    }
+
     private Projectile projectile;
-    private float scale;
+    private static float scale = 3;
+    private static float width = 40;
+    private static float height = 40;
+    private static float realSizeX = width*scale;
+    private static float realSizeY = height*scale;
 
     public Tank() {
         this.texture = new Texture("tank.png");
@@ -35,20 +45,20 @@ public class Tank {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             angle += 90.0f * dt;
         }
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-//            angle -= 90.0f;
-//        }
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-//            angle += 90.0f;
-//        }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            x += speed * MathUtils.cosDeg(angle) * dt;
-            y += speed * MathUtils.sinDeg(angle) * dt;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            x -= speed * MathUtils.cosDeg(angle) * dt * 0.2f;
-            y -= speed * MathUtils.sinDeg(angle) * dt * 0.2f;
-        }
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                x += speed * MathUtils.cosDeg(angle) * dt;
+                y += speed * MathUtils.sinDeg(angle) * dt;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                x -= speed * MathUtils.cosDeg(angle) * dt * 0.2f;
+                y -= speed * MathUtils.sinDeg(angle) * dt * 0.2f;
+            }
+
+        if(x<=realSizeX/2) x = realSizeX/2;
+        if(y<=realSizeY/2) y = realSizeY/2;
+        if(x>=1280-realSizeX/2) x = 1280-realSizeX/2;
+        if(y>=720-realSizeY/2) y = 720-realSizeY/2;
+
         if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
             angleWeapon -= 90.0f * dt;
         }
@@ -56,7 +66,7 @@ public class Tank {
             angleWeapon += 90.0f * dt;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && !projectile.isActive()) {
-            projectile.shoot(x + 16 * scale * MathUtils.cosDeg(angle), y + 16* scale * MathUtils.sinDeg(angle), angle + angleWeapon);
+            projectile.shoot(x + 16 * scale * MathUtils.cosDeg(angle), y + 16* scale * MathUtils.sinDeg(angle), angle + angleWeapon,target);
         }
         if (projectile.isActive()) {
             projectile.update(dt);
@@ -64,8 +74,8 @@ public class Tank {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, x - 20, y - 20, 20, 20, 40, 40, scale, scale, angle, 0, 0, 40, 40, false, false);
-        batch.draw(textureWeapon, x - 20, y - 20, 20, 20, 40, 40, scale, scale, angle + angleWeapon, 0, 0, 40, 40, false, false);
+        batch.draw(texture, x - 20, y - 20, width/2, height/2, width, height, scale, scale, angle, 0, 0, 40, 40, false, false);
+        batch.draw(textureWeapon, x - 20, y - 20, width/2, height/2, width, height, scale, scale, angle + angleWeapon, 0, 0, 40, 40, false, false);
         if (projectile.isActive()) {
             projectile.render(batch);
         }
@@ -74,5 +84,9 @@ public class Tank {
     public void dispose() {
         texture.dispose();
         projectile.dispose();
+    }
+
+    public void setTarget(Target target){
+        this.target = target;
     }
 }
