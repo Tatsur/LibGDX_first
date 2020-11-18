@@ -45,5 +45,6 @@ public class MyGdxGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         tank.dispose();
+        target.dispose();
     }
 }
